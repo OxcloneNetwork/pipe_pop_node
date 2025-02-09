@@ -30,7 +30,7 @@ tmux new-session -s pop-node
 ## Step 3: Download and Set Up the POP Binary
 ```console
 # Download the compiled pop binary
-curl -L -o pop "https://permissionless-labs.us10.list-manage.com/track/click?u=43df23ffe2d20a869f8209457&id=c334474a55&e=18706de02f"
+curl -L -o pop "https://dl.pipecdn.app/v0.2.4/pop"
 
 # Assign executable permission to the pop binary
 chmod +x pop
