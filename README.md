@@ -30,7 +30,7 @@ tmux new-session -s pop-node
 ## Step 3: Download and Set Up the POP Binary
 ```console
 # Download the compiled pop binary
-curl -L -o pop "https://dl.pipecdn.app/v0.2.4/pop"
+curl -L -o pop "https://permissionless-labs.us10.list-manage.com/track/click?u=43df23ffe2d20a869f8209457&id=c334474a55&e=18706de02f"
 
 # Assign executable permission to the pop binary
 chmod +x pop
@@ -102,12 +102,18 @@ WorkingDirectory=/var/lib/pop
 WantedBy=multi-user.target
 EOF
 ```
+## Replace the pubkey with your SOL wallet address.
 Modify **pop.service**: Customize the parameters (such as --ram, --max-disk, --pubKey) based on your preferences.
 
 ## Set Config File Symlink and Create a POP Alias
 ```console
 ln -sf /var/lib/pop/node_info.json ~/node_info.json
 grep -q "alias pop='cd /var/lib/pop && /opt/pop/pop'" ~/.bashrc || echo "alias pop='cd /var/lib/pop && /opt/pop/pop'" >> ~/.bashrc && source ~/.bashrc
+```
+## Set Up Alias for Easy Access
+```console
+echo "alias pop='/opt/pop/pop'" >> ~/.bashrc
+source ~/.bashrc
 ```
 ## Enable and Start the Service
 ```console
@@ -175,6 +181,84 @@ tmux attach-session -t pop-node
 ```
 ## Refer to pipe docs for more info:
 https://docs.pipe.network/devnet-2
+
+## Update 
+## Download the compiled pop binary
+```console
+curl -L -o pop "https://dl.pipecdn.app/v0.2.4/pop"
+```
+## Assign executable permission to the pop binary
+```console
+chmod +x pop
+```
+# Troubleshooting Common Issues
+
+## 1️⃣ "No such file or directory" when running pop
+
+If you see this error:
+
+-bash: ./pop: No such file or directory
+
+Try running:
+```console
+/opt/pop/pop --status
+```
+If that works, set up the alias as mentioned above.
+
+## 2️⃣ Checking if the service is running
+
+To confirm the node is active:
+```console
+sudo systemctl status pop.service
+```
+## 3️⃣ Verifying if POP is listening on the correct port
+```console
+ss -tulnp | grep 8003
+```
+Expected output:
+
+tcp   LISTEN 0  128  0.0.0.0:8003  0.0.0.0:*  users:("pop",pid=XXXX,fd=XX)
+
+## 4️⃣ Enabling Port Forwarding for Remote Access
+
+If external access is required, open port 8003:
+
+For UFW (Ubuntu/Debian):
+```console
+sudo ufw allow 8003/tcp
+```
+For Firewalld (CentOS/RHEL):
+```console
+sudo firewall-cmd --add-port=8003/tcp --permanent
+sudo firewall-cmd --reload
+```
+If behind a router, forward port 8003 (TCP) to your machine.
+
+## 5️⃣ Testing External Access
+
+From another machine:
+```console
+telnet <your-server-ip> 8003
+```
+If you get:
+
+Connected to <your-server-ip>.
+HTTP/1.1 408 Request Timeout
+
+This means your node is reachable. 🎉
+
+## 6️⃣ Restarting the Service
+
+If needed, restart the service:
+```console
+sudo systemctl restart pop.service
+```
+## 7️⃣ Checking Logs for Errors
+
+journalctl -u pop.service -f
+
+# Your node should now be up and running! 🚀
+
 
 
 
